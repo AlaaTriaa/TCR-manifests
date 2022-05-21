@@ -1,0 +1,37 @@
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  annotations:
+    kubernetes.io/ingress.class: "nginx"
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "PUT, GET, POST, OPTIONS, DELETE"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "DNT,X-CustomHeader,X-LANG,Keep-Alive,User-Agent,X-Requested-With,If-Modified-Since,Cache-Control,Content-Type,X-Api-Key,X-Device-Id,Access-Control-Allow-Origin"
+  name: tcr-ingress
+  namespace: tcr-ns
+  labels:
+    name: frontend-ingress
+spec:
+  defaultBackend:
+    service:
+      name: tcr-app-client-svc
+      port:
+        number: 3000
+  rules:
+    - host: talan-container-registry.tn
+      http:
+        paths:
+          - path: /frontend
+            pathType: Prefix
+            backend:
+              service:
+                name: tcr-app-client-svc
+                port:
+                  number: 3000
+          - path: /backend
+            pathType: Prefix
+            backend:
+              service:
+                name: tcr-app-server-svc
+                port:
+                  number: 9000
